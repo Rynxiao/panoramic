@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Panolens</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+
+    #container {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+<div id="container"></div>
+<script src="js/three.min.js"></script>
+<script src="js/panolens.min.js"></script>
+
+<script>
+  var panorama, viewer, container, infospot;
+
+  container = document.querySelector('#container');
+
+  panorama = new PANOLENS.ImagePanorama('../images/view.jpg');
+
+  infospot = new PANOLENS.Infospot(350, PANOLENS.DataImage.Info);
+  infospot.position.set(0, -2000, -5000);
+
+  panorama.add(infospot);
+
+  viewer = new PANOLENS.Viewer({
+     container: container,
+     autoRotate: true,
+     autoRotateSpeed: 1,
+     autoRotateActivationDuration: 5000
+  });
+  viewer.add(panorama);
+
+  viewer.addUpdateCallback(function () {
+    // panorama.rotation.y += 0.001;
+  });
+</script>
+</body>
+</html>

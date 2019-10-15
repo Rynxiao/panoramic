@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Panolens</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+    #panel {
+      width: 320px;
+      height: 240px;
+      background-color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div id="panel"></div>
+
+  <script src="js/three.min.js"></script>
+  <script src="js/panolens.min.js"></script>
+
+  <script>
+    var panorama, viewer, infospot;
+    var panel = document.querySelector('#panel');
+
+    panorama = new PANOLENS.ImagePanorama('../images/little-planet-360-photo-1024x512.jpg');
+
+    infospot = new PANOLENS.Infospot( 350, PANOLENS.DataImage.Info );
+    infospot.position.set( 0, -2000, -5000 );
+    infospot.addHoverElement( panel, 150 );
+    panorama.add(infospot);
+
+    viewer = new PANOLENS.Viewer( { initialLookAt: new THREE.Vector3( 2953.93, 1891.55, 5213.46 ) } );
+    viewer.add( panorama );
+
+    var renderer, camera, scene, box;
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(0xffffff);
+    renderer.setSize(panel.clientWidth, panel.clientHeight);
+    camera = new THREE.PerspectiveCamera(45, panel.clientWidth / panel.clientHeight, 1, 2000);
+    scene = new THREE.Scene();
+    console.log(infospot.element);
+    infospot.element.appendChild( renderer.domElement );
+
+    box = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), new THREE.MeshNormalMaterial());
+    box.position.z = -20;
+    scene.add( box );
+
+    // Speficy target (panorama) to be updated every frame
+    viewer.addUpdateCallback( function () {
+      renderer.render(scene, camera);
+      panorama.rotation.y += 0.001;
+    } );
+  </script>
+</body>
+</html>

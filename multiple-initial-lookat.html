@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Panolens</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+
+    #container {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+<div id="container"></div>
+<script src="js/three.min.js"></script>
+<script src="js/panolens.min.js"></script>
+
+<script>
+  var panorama, viewer, container, infospot;
+  var lookAtPositions = [
+    new THREE.Vector3(4871.39, 1088.07, -118.41),
+    new THREE.Vector3(1278.27, 732.65, 4769.19)
+  ];
+
+  var infospotPositions = [
+    new THREE.Vector3(3136.06, 1216.30, -3690.14),
+    new THREE.Vector3(3258.81, -295.50, 3771.13)
+  ];
+
+  container = document.querySelector('#container');
+
+  panorama = new PANOLENS.ImagePanorama('../images/view.jpg');
+  panorama.addEventListener( 'enter-fade-start', function(){
+    viewer.tweenControlCenter( lookAtPositions[0], 0);
+  });
+  panorama.link(panorama, infospotPositions[0]);
+
+  infospot = new PANOLENS.Infospot(350, PANOLENS.DataImage.Info);
+  infospot.position.set(-100, -500, -5000);
+  infospot.addHoverText("The Story");
+  infospot.addEventListener('click', function() {
+    // viewer.setPanorama(panorama);
+  });
+  panorama.add(infospot);
+
+  viewer = new PANOLENS.Viewer({ container: container });
+  viewer.add(panorama);
+
+  viewer.addUpdateCallback(function () {
+    panorama.rotation.y += 0.001;
+  });
+</script>
+</body>
+</html>

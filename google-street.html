@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Panolens</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+  </style>
+</head>
+<body>
+<script src="js/three.min.js"></script>
+<script src="js/panolens.min.js"></script>
+
+<script>
+  var panorama, viewer, infospot;
+
+  // Get Google Map API Key - https://developers.google.com/maps/documentation/javascript/get-api-key
+  panorama = new PANOLENS.GoogleStreetviewPanorama( 'JmSoPsBPhqWvaBmOqfFzgA' );
+
+  viewer = new PANOLENS.Viewer( { initialLookAt: new THREE.Vector3( 2953.93, 1891.55, 5213.46 ) } );
+  viewer.add( panorama );
+
+  // Speficy target (panorama) to be updated every frame
+  viewer.addUpdateCallback( function () {
+    panorama.rotation.y += 0.001;
+  } );
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Panolens</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+
+    #container {
+      width: 100%;
+      height: 100%;
+    }
+
+    #desc-container {
+      max-width: 500px;
+      max-height: 500px;
+      min-width: 200px;
+      min-height: 250px;
+      background: #fff;
+      color: #000;
+      border-radius: 3px;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #desc-container > iframe {
+      border: none;
+      width:100%;
+    }
+
+    .title {
+      font-size: 1.5em;
+      text-align: center;
+      padding: 5px;
+    }
+
+    .text {
+      padding: 0 20px 20px 20px;
+    }
+
+    #progress {
+      width: 0;
+      height: 5px;
+      position: fixed;
+      top: 0;
+      background: #fff;
+      -webkit-transition: opacity 0.5s ease;
+      transition: opacity 0.5s ease;
+    }
+
+    #progress.finish {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+<div id="container"></div>
+<div id="progress"></div>
+
+<div id="desc-container" style="display:none">
+  <iframe src="https://www.youtube.com/embed/D7icsuamx5E"></iframe>
+  <div class="title">China's Forgotten War</div>
+  <div class="text">WWII came to the small town of Tai’erzhuang in central China – and it was never the same again. The town was strategically placed, on the north-south transport railway corridor and the ancient Grand Canal, and so was a focus of the Japanese Imperial army as it advanced. Li Jing Shan was only a child when his family fled the fighting. They returned to find their home, and most of the town, in ruins.</div>
+</div>
+
+<script src="js/three.min.js"></script>
+<script src="js/panolens.min.js"></script>
+
+<script>
+  var panorama, panorama2, viewer, container, infospot1, progress, progressElement;
+  container = document.querySelector('#container');
+
+  progressElement = document.getElementById( 'progress' );
+
+  function onEnter() {
+    progressElement.style.width = 0;
+    progressElement.classList.remove('finish');
+  }
+
+  function onProgress(event) {
+    progress = event.progress.loaded / event.progress.total * 100;
+    progressElement.style.width = progress + '%';
+    if (progress === 100) {
+      progressElement.classList.add('finish');
+    }
+  }
+
+  panorama = new PANOLENS.ImagePanorama('images/view.jpg');
+  panorama.addEventListener('progress', onProgress);
+  panorama.addEventListener('enter', onEnter);
+
+  const path = 'images/cube/';
+  const format = '.png';
+  panorama2 = new PANOLENS.CubePanorama( [
+    path + 'px' + format, path + 'nx' + format,
+    path + 'py' + format, path + 'ny' + format,
+    path + 'pz' + format, path + 'nz' + format
+  ]);
+  panorama2.addEventListener('progress', onProgress);
+  panorama2.addEventListener('enter', onEnter);
+
+  panorama.link(panorama2, new THREE.Vector3(0, -1000, -3000));
+  panorama2.link(panorama, new THREE.Vector3(0, -1000, -3000));
+
+  infospot1 = new PANOLENS.Infospot( 300, PANOLENS.DataImage.Info );
+  infospot1.position.set( -5000.00, -1825.25, 197.56 );
+  infospot1.addHoverElement(document.getElementById('desc-container'), 200);
+  panorama.add(infospot1);
+
+  // infospot2 = new PANOLENS.Infospot();
+  // infospot2.position.set(0, -2000, -5000);
+  // infospot2.addEventListener('click', function() {
+  //   viewer.setPanorama(panorama);
+  // });
+  // panorama2.add(infospot2);
+
+  viewer = new PANOLENS.Viewer({
+    container: container,
+    // autoRotate: true,
+    // autoRotateSpeed: 1,
+    // autoRotateActivationDuration: 5000
+  });
+  viewer.add(panorama, panorama2);
+</script>
+</body>
+</html>
